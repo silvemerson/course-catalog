@@ -1,4 +1,4 @@
-Simple application made with Python3 and Flask
+# Simple application made with Python3 and Flask
 
 Propose of this app is:
 
