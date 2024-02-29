@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        IMAGE_NAME="courseCatalog"
+        IMAGE_NAME="course-catalog"
         IMAGE_TAG="0.${BUILD_NUMBER}"
     }
 
