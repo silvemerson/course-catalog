@@ -49,8 +49,9 @@ pipeline {
         stage('Push image'){
             steps{
                 script{
-                    docker.withServer("http://192.168.88.20:8082", 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
-                        image.push()
+                    docker.withRegistry('http://192.168.88.20:8082', 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
+                        image.push("${IMAGE_TAG}")
+                        image.push("latest")
                     }
                 }
             }
