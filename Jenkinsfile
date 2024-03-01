@@ -50,7 +50,7 @@ pipeline {
             steps{
                 script{
                     docker.withRegistry("http://192.168.88.20:8082", "b374f54f-2715-4723-b845-4e87f8bbbfea" ){
-                        image.push()
+                        image.push([${IMAGE_NAME}:${IMAGE_TAG}])
                     }
                 }
             }
