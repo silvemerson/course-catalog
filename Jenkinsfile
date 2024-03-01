@@ -3,6 +3,7 @@ pipeline {
     environment {
         IMAGE_NAME="course-catalog"
         IMAGE_TAG="0.${BUILD_NUMBER}"
+        NEXUS_REPO="http://192.168.88.20:8082"
     }
 
     stages{
@@ -49,13 +50,17 @@ pipeline {
         stage('Push image'){
             steps{
                 script{
-                    docker.withRegistry('http://192.168.88.20:8082', 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
+                    docker.withRegistry('${NEXUS_REPO}', 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
                         image.push("${IMAGE_TAG}")
                         image.push("latest")
                     }
                 }
             }
         }
+    }
+    cleanup{
+        sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
+        sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
     }
 
 }
