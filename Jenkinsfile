@@ -9,7 +9,7 @@ pipeline {
         stage('Executando Teste Unitario'){
             steps{
                 script{
-                    image.inside("-v $WORKSPACE}:/courseCatalog"){
+                    image.inside("-v ${WORKSPACE}:/courseCatalog"){
                         sh "nosetestes --with-xunit --with-coverage --cover-package=project teste_user.py"
                     }
                 }
