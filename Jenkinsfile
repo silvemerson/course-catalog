@@ -67,8 +67,8 @@ pipeline {
             echo "Pipeline executada com Falha"
         }
         cleanup{
-            sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
-            sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
+            sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
+            sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
         }
     }
 }
