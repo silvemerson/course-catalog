@@ -14,12 +14,12 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Executando Teste Unitario'){
             steps{
                 script{
                     image.inside("-v ${WORKSPACE}:/courseCatalog"){
-                        sh "nosetestes --with-xunit --with-coverage --cover-package=project teste_user.py"
+                        sh "nosetests --with-xunit --with-coverage --cover-package=project test_users.py"
                     }
                 }
             }
