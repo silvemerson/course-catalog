@@ -58,9 +58,17 @@ pipeline {
             }
         }
     }
-    cleanup{
-        sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
-        sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
-    }
+    post{
+        success {
+            echo "Pipeline executada com Sucesso"
+        }
 
+        failure{
+            echo "Pipeline executada com Falha"
+        }
+        cleanup{
+            sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
+            sh "docker rm -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
+        }
+    }
 }
