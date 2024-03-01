@@ -36,6 +36,15 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube Analysis Result'){
+            steps{
+                script{
+                    timeout(time: 30, unit: 'SECONDS'){
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
+        }
     }
 
 }
