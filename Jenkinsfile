@@ -3,7 +3,9 @@ pipeline {
     environment {
         IMAGE_NAME="course-catalog"
         IMAGE_TAG="0.${BUILD_NUMBER}"
-        NEXUS_REPO="http://192.168.88.20:8082"
+        NEXUS_REPO="192.168.88.20:8082"
+        HTTP_PROT="http://"
+        DOCKER_REGISTRY="${HTTP_PROTO}${NEXUS_REPO}"
     }
 
     stages{
@@ -50,7 +52,7 @@ pipeline {
         stage('Push image'){
             steps{
                 script{
-                    docker.withRegistry('${NEXUS_REPO}', 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
+                    docker.withRegistry('${DOCKER_REGISTRY}', 'b374f54f-2715-4723-b845-4e87f8bbbfea' ){
                         image.push("${IMAGE_TAG}")
                         image.push("latest")
                     }
