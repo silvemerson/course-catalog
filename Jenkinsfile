@@ -6,6 +6,15 @@ pipeline {
     }
 
     stages{
+
+        stage('Build'){
+            steps{
+                script{
+                    image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                }
+            }
+        }
+        
         stage('Executando Teste Unitario'){
             steps{
                 script{
