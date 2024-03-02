@@ -6,6 +6,9 @@ pipeline {
         NEXUS_REPO="192.168.88.20:8082"
         HTTP_PROT="http://"
         DOCKER_REGISTRY="${HTTP_PROTO}${NEXUS_REPO}"
+        NAMESPACE_HOMOLOG="homolog"
+        NAMESPACE_PROD="prod"
+        KUBECONFIG = credentials('k3s_kubeconfig')
     }
 
     stages{
@@ -59,6 +62,22 @@ pipeline {
                 }
             }
         }
+
+        stage ('Inicializando o Kubecofig'){
+            steps{
+                sh 'echo $KUBECONFIG'
+                sh 'cat $KUBECONFIG > .kubeconfig/config'
+            }
+        }
+        
+        stage('Deploy em Homologação'){
+            steps{
+                script{
+                    sh 'kubectl -n ${NAMESPACE_HOMOLOG} apply -f manifest '
+                }
+
+            }
+        }
     }
     post{
         success {
@@ -68,9 +87,9 @@ pipeline {
         failure{
             echo "Pipeline executada com Falha"
         }
-        cleanup{
-            sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
-            sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
-        }
+        // cleanup{
+        //     sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
+        //     sh "docker rmi -f ${NEXUS_REPO}/${IMAGE_NAME}:latest"
+        // }
     }
 }
