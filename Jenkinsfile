@@ -4,7 +4,7 @@ pipeline {
         IMAGE_NAME="course-catalog"
         IMAGE_TAG="0.${BUILD_NUMBER}"
         NEXUS_REPO="192.168.88.20:8082"
-        HTTP_PROT="http://"
+        HTTP_PROTO="http://"
         DOCKER_REGISTRY="${HTTP_PROTO}${NEXUS_REPO}"
         NAMESPACE_HOMOLOG="homolog"
         NAMESPACE_PROD="prod"
