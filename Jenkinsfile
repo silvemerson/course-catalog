@@ -66,6 +66,7 @@ pipeline {
         stage ('Inicializando o Kubecofig'){
             steps{
                 sh 'echo $KUBECONFIG'
+                sh 'mkdir .kubeconfig'
                 sh 'cat $KUBECONFIG > .kubeconfig/config'
             }
         }
