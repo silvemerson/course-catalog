@@ -1,5 +1,13 @@
 stages:
+ - test
  - build
+
+test_unit:
+  stage: test
+  image: python:3
+  script: 
+   - pip install -r requirements.txt
+   - python test_users.py
 
 kaniko:
   stage: build
