@@ -1,24 +1,13 @@
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+
 stages:
- - test
  - build
-
-variables:
-  DOCKER_HOST: http://docker:2375/
-  DOCKER_TLS_CERTDIR: ""
-
-teste_hello-world:
-  stage: test
-  image: alpine:3.19.1
-  script:
-    - echo "Hello World"
-  only:
-   - master
-
-
+ 
 build:
   stage: build
-  image: docker:24.0.5
-  services: docker-dind
   script:
     - docker build -t course-catalog .
   only:
