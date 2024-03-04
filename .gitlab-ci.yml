@@ -1,5 +1,6 @@
-steges:
-- test
+stages:
+ - test
+
 
 teste_hello-world:
   stage: test
