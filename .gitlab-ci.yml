@@ -1,3 +1,8 @@
+variables:
+  DOCKER_HOST: http://docker:2375/
+  DOCKER_TLS_CERTDIR: ""
+
+
 stages:
  - test
  - build
@@ -15,6 +20,7 @@ teste_hello-world:
 build:
   stage: build
   image: docker:24.0.5
+  services: docker-dind
   script:
     - docker build -t course-catalog .
   only:
