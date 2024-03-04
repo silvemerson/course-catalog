@@ -1,0 +1,13 @@
+steges:
+- test
+
+teste_hello-world:
+  stage: test
+  image: alpine:3.19.1
+  script:
+    - echo "Hello World"
+  only:
+   - master
+
+
+
