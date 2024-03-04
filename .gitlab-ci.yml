@@ -13,7 +13,7 @@ kaniko:
       /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${DOCKER_HUB_IMAGE}:${CI_COMMIT_TAG}"
+      --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --destination "${DOCKER_HUB_IMAGE}:latest"
   only:
    - master
