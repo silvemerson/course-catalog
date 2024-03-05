@@ -23,7 +23,7 @@ qualitygate:
 
 sast:
   stage: sast
-  include: 
+include: 
    - template: Security/SAST.gitlab-ci.yml
 
 kaniko:
