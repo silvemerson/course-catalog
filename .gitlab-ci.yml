@@ -5,13 +5,6 @@ stages:
  - build
 
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-   - /kaniko-cache
-
-before_script:
-  - mkdir -p /kaniko-cache
 
 test_unit:
   stage: test
@@ -42,29 +35,19 @@ trivy_scan:
     DOCKER_DRIVER: overlay2
     # See https://github.com/docker-library/docker/pull/166
     DOCKER_TLS_CERTDIR: ""
-    IMAGE: "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
+    IMAGE: $DOCKER_HUB_IMAGE:$CI_JOB_ID
   before_script:
     - export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
     - echo $TRIVY_VERSION
     - wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
-  allow_failure: true
+  # allow_failure: 
   script:
-    # Build image
-    - docker build -t $IMAGE .
-    # Build report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json $IMAGE
-    # Print report
-    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $IMAGE
-    # Fail on severe vulnerabilities
-    - ./trivy --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $IMAGE
-  cache:
-    paths:
-      - .trivycache/
-  # Enables https://docs.gitlab.com/ee/user/application_security/container_scanning/ (Container Scanning report is available on GitLab EE Ultimate or GitLab.com Gold)
-  artifacts:
-    reports:
-      container_scanning: gl-container-scanning-report.json
+    - echo $IMAGE
+    - docker build -t silvemerson/course-catalog .
+    - ./trivy image silvemerson/course-catalog
 
+  only:
+   - master
 
 kaniko:
   stage: build
@@ -80,8 +63,6 @@ kaniko:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --destination "${DOCKER_HUB_IMAGE}:latest"
-      --cache=true
-      --cache-repo="${DOCKER_HUB_IMAGE}/cache"
   only:
    - master
 
