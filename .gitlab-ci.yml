@@ -23,12 +23,10 @@ qualitygate:
 
 sast:
   stage: sast
+  only:
+   - master  
 include: 
    - template: Security/SAST.gitlab-ci.yml
-   - template: Jobs/Build.gitlab-ci.yml
-   - template: Jobs/Container-Scanning.gitlab-ci.yml
-  only:
-   - master
 
 kaniko:
   stage: build
@@ -47,3 +45,10 @@ kaniko:
   only:
    - master
 
+trivy:
+  stage: sast
+  image: aquasec/trivy:latest
+  script: 
+   - trivy --severity HIGH -f ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
+  only:
+   - master
