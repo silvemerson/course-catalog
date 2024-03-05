@@ -1,6 +1,7 @@
 stages:
  - test
  - qualitygate
+ - sast
  - build
 
 test_unit:
@@ -11,7 +12,7 @@ test_unit:
    - python test_users.py
   only:
    - master
-   
+
 qualitygate:
   stage: qualitygate
   image: sonarsource/sonar-scanner-cli
@@ -19,6 +20,11 @@ qualitygate:
     - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
   only:
    - master
+
+sast:
+  stage: sast
+  include: 
+   - template: Security/SAST.gitlab-ci.yml
 
 kaniko:
   stage: build
