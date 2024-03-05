@@ -42,6 +42,8 @@ trivy_scan:
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --no-push
     - - ./trivy image ${DOCKER_HUB_IMAGE}:${CI_JOB_ID} .
+  only:
+   - master
 
 
 kaniko:
