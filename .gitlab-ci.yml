@@ -40,7 +40,8 @@ pre-build:
     key: "${CI_COMMIT_REF_SLUG}-build-cache"
     paths:
       - /docker_cache/
-
+  only:
+   - master
 
 trivy_scan:
   stage: trivy
