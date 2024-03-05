@@ -29,6 +29,30 @@ include:
    - template: Security/SAST.gitlab-ci.yml
 
 kaniko:
+  stage: sast
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --no-push
+  only:
+   - master
+
+trivy:
+  stage: sast
+  image: aquasec/trivy:latest
+  script: 
+   - trivy ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
+  only:
+   - master
+
+kaniko:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
@@ -42,13 +66,5 @@ kaniko:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --destination "${DOCKER_HUB_IMAGE}:latest"
-  only:
-   - master
-
-trivy:
-  stage: sast
-  image: aquasec/trivy:latest
-  script: 
-   - trivy ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
   only:
    - master
