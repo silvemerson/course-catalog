@@ -1,6 +1,7 @@
 stages:
  - test
  - qualitygate
+ - pre-build
  - sast
  - build
 
@@ -21,8 +22,15 @@ qualitygate:
   only:
    - master
 
-kaniko:
-  stage: sast
+# sast:
+#   stage: sast
+#   only:
+#    - master  
+# include: 
+#    - template: Security/SAST.gitlab-ci.yml
+
+kaniko-no-push:
+  stage: pre-build
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
