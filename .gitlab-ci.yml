@@ -42,8 +42,8 @@ trivy_scan:
     - wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
   allow_failure: true
   script:
-    - docker build -t ${DOCKER_HUB_IMAGE}:${CI_JOB_ID} .
-    - ./trivy image ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
+    - docker build -t $IMAGE .
+    - ./trivy image $IMAGE
 
   # only:
   #  - master
