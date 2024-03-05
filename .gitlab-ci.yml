@@ -42,6 +42,6 @@ trivy:
   stage: sast
   image: aquasec/trivy:latest
   script: 
-   - trivy --severity HIGH -f ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
+   - trivy ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
   only:
    - master
