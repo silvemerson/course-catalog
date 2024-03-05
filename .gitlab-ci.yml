@@ -21,13 +21,6 @@ qualitygate:
   only:
    - master
 
-sast:
-  stage: sast
-  only:
-   - master  
-include: 
-   - template: Security/SAST.gitlab-ci.yml
-
 kaniko:
   stage: build
   image:
