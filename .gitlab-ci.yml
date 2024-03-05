@@ -1,5 +1,6 @@
 stages:
  - test
+ - qualitygate
  - build
 
 test_unit:
@@ -8,12 +9,16 @@ test_unit:
   script: 
    - pip install -r requirements.txt
    - python test_users.py
-
+  only:
+   - master
+   
 qualitygate:
-  stage: test
+  stage: qualitygate
   image: sonarsource/sonar-scanner-cli
   script:
     - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
+  only:
+   - master
 
 kaniko:
   stage: build
