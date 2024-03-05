@@ -4,12 +4,13 @@ stages:
  - trivy
  - build
 
-variables:
-  TRIVY_VERSION: "0.17.2"
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+   - /kaniko-cache
 
 before_script:
-  - wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-$(dpkg --print-architecture) -O /usr/local/bin/trivy
-  - chmod +x /usr/local/bin/trivy
+  - mkdir -p /kaniko-cache
 
 test_unit:
   stage: test
@@ -42,14 +43,17 @@ kaniko:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --destination "${DOCKER_HUB_IMAGE}:latest"
+      --cache=true
+      --cache-repo="${DOCKER_HUB_IMAGE}/cache"
   only:
    - master
 
 trivy_scan:
   stage: trivy
-  # image: aquasec/trivy:latest
+  image: aquasec/trivy:latest
   script:
-    - "trivy image --severity HIGH --format table --output scan.txt ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
+    - docker pull ${DOCKER_HUB_IMAGE}/cache:${CI_JOB_ID}
+    - "trivy image --severity HIGH --format table --output scan.txt ${DOCKER_HUB_IMAGE}/cache:${CI_JOB_ID}"
   artifacts:
     paths:
       - scan.txt  
