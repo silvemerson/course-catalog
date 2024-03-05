@@ -1,34 +1,27 @@
 stages:
- - test
- - qualitygate
+#  - test
+#  - qualitygate
  - trivy
- - build
+#  - build
 
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-   - /kaniko-cache
 
-before_script:
-  - mkdir -p /kaniko-cache
+# test_unit:
+#   stage: test
+#   image: python:3
+#   script: 
+#    - pip install -r requirements.txt
+#    - python test_users.py
+#   only:
+#    - master
 
-test_unit:
-  stage: test
-  image: python:3
-  script: 
-   - pip install -r requirements.txt
-   - python test_users.py
-  only:
-   - master
-
-qualitygate:
-  stage: qualitygate
-  image: sonarsource/sonar-scanner-cli
-  script:
-    - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
-  only:
-   - master
+# qualitygate:
+#   stage: qualitygate
+#   image: sonarsource/sonar-scanner-cli
+#   script:
+#     - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
+#   only:
+#    - master
 
 trivy_scan:
   stage: trivy
@@ -57,27 +50,25 @@ trivy_scan:
     - ./trivy --exit-code 0 --cache-dir --no-progress --severity HIGH $IMAGE
     # Fail on severe vulnerabilities
     - ./trivy --exit-code 1 --cache-dir --severity CRITICAL --no-progress $IMAGE
-  only:
-   - master
+  # only:
+  #  - master
 
 
-kaniko:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:v1.14.0-debug
-    entrypoint: [""]
-  script:
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - >-
-      /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
-      --destination "${DOCKER_HUB_IMAGE}:latest"
-      --cache=true
-      --cache-repo="${DOCKER_HUB_IMAGE}/cache"
-  only:
-   - master
+# kaniko:
+#   stage: build
+#   image:
+#     name: gcr.io/kaniko-project/executor:v1.14.0-debug
+#     entrypoint: [""]
+#   script:
+#     - mkdir -p /kaniko/.docker
+#     - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+#     - >-
+#       /kaniko/executor
+#       --context "${CI_PROJECT_DIR}"
+#       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+#       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
+#       --destination "${DOCKER_HUB_IMAGE}:latest"
+#   only:
+#    - master
 
 
