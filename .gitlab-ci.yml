@@ -1,8 +1,8 @@
 stages:
  - test
  - qualitygate
- - trivy
  - build
+ - trivy
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
