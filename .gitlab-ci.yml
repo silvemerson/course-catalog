@@ -25,6 +25,10 @@ sast:
   stage: sast
 include: 
    - template: Security/SAST.gitlab-ci.yml
+   - template: Jobs/Build.gitlab-ci.yml
+   - template: Jobs/Container-Scanning.gitlab-ci.yml
+  only:
+   - master
 
 kaniko:
   stage: build
