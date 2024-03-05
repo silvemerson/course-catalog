@@ -42,14 +42,9 @@ trivy_scan:
     - wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
   allow_failure: true
   script:
-    # Build image
-    - docker build -t ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
-    # Build report
-    - ./trivy --exit-code 0 --cache-dir  --no-progress --format template --template "@contrib/gitlab.tpl" -o gl-container-scanning-report.json ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
-    # Print report
-    - ./trivy --exit-code 0 --cache-dir --no-progress --severity HIGH $IMAGE
-    # Fail on severe vulnerabilities
-    - ./trivy --exit-code 1 --cache-dir --severity CRITICAL --no-progress $IMAGE
+    - docker build -t ${DOCKER_HUB_IMAGE}:${CI_JOB_ID} .
+    - ./trivy image ${DOCKER_HUB_IMAGE}:${CI_JOB_ID}
+
   # only:
   #  - master
 
