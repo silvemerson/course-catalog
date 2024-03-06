@@ -68,9 +68,7 @@ kind_k8s:
   image: docker:stable
   services:
     - name: docker:dind
-      command: ["--storage-driver=overlay2", "--network=host"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375/      
+      command: ["--storage-driver=overlay2", "--network=host"] 
   before_script:
     - apk add curl
     - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl
