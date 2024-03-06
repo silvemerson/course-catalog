@@ -65,11 +65,11 @@ stages:
 
 kind_k8s:
   stage: dev
-  image: docker:19-dind
+  image: docker:27-dind
   services:
     - name: docker:dind
   variables:
-    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_HOST: tcp://localhost:2375/
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   before_script:
