@@ -63,6 +63,6 @@ kaniko:
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --destination "${DOCKER_HUB_IMAGE}:latest"
   only:
-   - master
+   - dev
 
 
