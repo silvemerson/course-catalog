@@ -69,8 +69,7 @@ kind_k8s:
   services:
     - name: docker:dind
   variables:
-    DOCKER_HOST: tcp://127.0.0.1:2375
-    DOCKER_DRIVER: overlay2
+    DOCKER_DRIVER: host
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - apk add curl
