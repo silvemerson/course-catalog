@@ -69,7 +69,6 @@ kind_k8s:
   services:
     - name: docker:dind
   variables:
-    DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""    
   before_script:
     - apk add curl
