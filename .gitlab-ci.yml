@@ -68,10 +68,11 @@ kind_k8s:
   image: docker:26.0.0-rc1-dind-alpine3.19
   services:
     - name: docker:dind
+      entrypoint: ["env" "-u" "DOCKER_HOST"]
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_HOST: tcp://docker:2375
   before_script:
     - docker info
     - docker network ls  
