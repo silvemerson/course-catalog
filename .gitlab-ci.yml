@@ -40,7 +40,7 @@ trivy_scan:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --no-push
-    - ./trivy image silvemerson/course-catalog:$CI_JOB_ID .
+    - ./trivy image silvemerson/course-catalog
   only:
    - master
 
