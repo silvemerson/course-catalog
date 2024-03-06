@@ -65,7 +65,7 @@ stages:
 
 kind_k8s:
   stage: dev
-  image: docker:26.0.0-rc1-dind-rootless
+  image: docker:26.0.0-rc1-dind-alpine3.19
   services:
     - name: docker:dind
   variables:
