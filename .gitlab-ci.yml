@@ -5,7 +5,6 @@ stages:
  - build
 
 
-
 test_unit:
   stage: test
   image: python:3
@@ -41,7 +40,9 @@ trivy_scan:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
       --no-push
-    - ./trivy image $DOCKER_HUB_IMAGE:$CI_JOB_ID .
+    - export IMAGE="$DOCKER_HUB_IMAGE:$CI_JOB_ID"
+    - echo $IMAGE
+    - ./trivy image $IMAGE .
   only:
    - master
 
