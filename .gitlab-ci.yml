@@ -68,7 +68,6 @@ kind_k8s:
   image: docker:26.0.0-rc1-dind-alpine3.19
   services:
     - name: docker:dind
-      entrypoint: ["env" "-u" "DOCKER_HOST"]
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
