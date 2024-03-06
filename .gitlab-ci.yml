@@ -96,20 +96,21 @@ stages:
 #   #  - master
 
 kind_k8s:
-  stage: dev
-  image: kindest/node:v1.26.14
-  services:
-    - name: docker:dind
+  image: docker:stable
   variables:
-    # DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-    # DOCKER_HOST: tcp://docker:2375
-  before_script:
-    - kind create cluster --name $CI_PIPELINE_ID --wait 360s
-    - export KUBECONFIG="$(kind get kubeconfig-path --name $CI_PIPELINE_ID)"
-    - REAL_IP=$(ip route|awk '/default/ { print $3 }')
-    - sed -i -e "s/localhost/$REAL_IP/g" $KUBECONFIG
-  script: 
-    - kubectl get nodes --insecure-skip-tls-verify=true  
-  after_script:
-    - kind delete cluster --name $CI_PIPELINE_ID
+    KUBECTL: v1.17.0
+    KIND: v0.8.1
+  services:
+    - docker:dind
+  stage: dev
+  script:
+    - apk add -U wget
+    - wget -O /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND}/kind-linux-amd64
+    - chmod +x /usr/local/bin/kind
+    - wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl
+    - chmod +x /usr/local/bin/kubectl
+    - kind create cluster --config=./gitlab/kind-config.yaml
+    - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
+    - kubectl get nodes -o wide
+    - kubectl get pods --all-namespaces -o wide
+    - kubectl get services --all-namespaces -o wide
