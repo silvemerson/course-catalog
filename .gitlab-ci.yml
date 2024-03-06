@@ -63,27 +63,26 @@ kaniko:
   only:
    - master
 
+
 kind_k8s:
-  stage: dev
   image: docker:stable
+  variables:
+    KUBECTL: v1.17.0
+    KIND: v0.8.1
   services:
-    - name: docker:dind
-      command: ["--storage-driver=overlay2", "--network=host"] 
-  before_script:
-    - apk add curl
-    - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl
-    - chmod +x kubectl
-    - mv kubectl /usr/local/bin/
-    - curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/0.1.0/kind-linux-amd64
-    - chmod +x kind
-    - mv kind /usr/local/bin/
-    - kind create cluster --name $CI_PIPELINE_ID --wait 180s
-    - export KUBECONFIG="$(kind get kubeconfig-path --name $CI_PIPELINE_ID)"
-    - REAL_IP=$(ip route|awk '/default/ { print $3 }')
-    - sed -i -e "s/localhost/$REAL_IP/g" $KUBECONFIG
-  script: 
-    - kubectl get nodes --insecure-skip-tls-verify=true  
-  after_script:
-    - kind delete cluster --name $CI_PIPELINE_ID
+    - docker:dind
+  stage: dev
+  script:
+    - apk add -U wget curl
+    - wget -O /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND}/kind-linux-amd64
+    - chmod +x /usr/local/bin/kind
+    - wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl
+    - chmod +x /usr/local/bin/kubectl
+    - kind create cluster --config=kind/kind-config.yaml
+    - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
+    - kubectl create ns dev 
+    - kubectl -n dev apply -f manifest-dev
+    - timeout 45 | kubectl -n dev port-forward service web 5000:5000 &
+    - curl -I http://127.0.0.1:5000
   only:
    - master
