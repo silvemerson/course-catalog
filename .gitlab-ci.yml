@@ -109,8 +109,7 @@ kind_k8s:
     - chmod +x /usr/local/bin/kind
     - wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl
     - chmod +x /usr/local/bin/kubectl
-    - kind create cluster --name $CI_PIPELINE_ID
-    - cat $HOME/.kube/config
+    - kind create cluster --config=./gitlab/kind-config.yaml
     - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
     - kubectl get nodes -o wide
     - kubectl get pods --all-namespaces -o wide
