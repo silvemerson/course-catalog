@@ -69,11 +69,13 @@ kind_k8s:
   services:
     - name: docker:dind
   variables:
-    DOCKER_DRIVER: overlay2
+    # DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://docker:2375
+    # DOCKER_HOST: tcp://docker:2375
   before_script:
     - docker info
+    - echo $DOCKER_HOST
+    - echo $DOCKER_DRIVER
     - docker network ls  
     - apk add curl
     - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl
@@ -82,7 +84,7 @@ kind_k8s:
     - curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/0.1.0/kind-linux-amd64
     - chmod +x kind
     - mv kind /usr/local/bin/
-    - kind create cluster --name $CI_PIPELINE_ID --wait 180s
+    - kind create cluster --name $CI_PIPELINE_ID --wait 360s
     - export KUBECONFIG="$(kind get kubeconfig-path --name $CI_PIPELINE_ID)"
     - REAL_IP=$(ip route|awk '/default/ { print $3 }')
     - sed -i -e "s/localhost/$REAL_IP/g" $KUBECONFIG
