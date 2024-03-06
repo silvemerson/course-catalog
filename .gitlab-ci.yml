@@ -72,6 +72,8 @@ kind_k8s:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   before_script:
+    - docker info
+    - docker network ls  
     - apk add curl
     - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl
     - chmod +x kubectl
@@ -84,8 +86,6 @@ kind_k8s:
     - REAL_IP=$(ip route|awk '/default/ { print $3 }')
     - sed -i -e "s/localhost/$REAL_IP/g" $KUBECONFIG
   script: 
-    - docker info
-    - docker network ls
     - kubectl get nodes --insecure-skip-tls-verify=true  
   after_script:
     - kind delete cluster --name $CI_PIPELINE_ID
