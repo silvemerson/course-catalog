@@ -3,7 +3,7 @@ stages:
  - qualitygate
  - trivy
  - build
- - dev
+ - teste_deploy
 
 
 test_unit:
@@ -71,7 +71,7 @@ kind_k8s:
     KIND: v0.8.1
   services:
     - docker:dind
-  stage: dev
+  stage: teste_deploy
   script:
     - apk add -U wget curl
     - wget -O /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND}/kind-linux-amd64
