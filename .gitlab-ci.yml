@@ -83,7 +83,7 @@ kind_k8s:
     - sleep 60 && kubectl get nodes
     - kubectl create ns dev 
     - kubectl -n dev apply -f manifest-dev
-    - export POD=$(kubectl -n dev get pods -l app=web -o=jsonpath='{.items[0].metadata.name}')
+    - sleep 30 && kubectl get pods -n dev
     - sleep 45 && kubectl -n dev $POD 5000:5000 &
     - curl -I http://127.0.0.1:5000
   # only:
