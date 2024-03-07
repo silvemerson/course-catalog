@@ -82,7 +82,7 @@ kind_k8s:
     - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
     - kubectl create ns dev 
     - kubectl -n dev apply -f manifest-dev
-    - timeout 45 | kubectl -n dev port-forward service web 5000:5000 &
+    - sleep 45 && kubectl -n dev port-forward service web 5000:5000 &
     - curl -I http://127.0.0.1:5000
   only:
    - master
