@@ -4,14 +4,15 @@ stages:
  - trivy
  - build
  - teste_deploy
-
+ - notification
 
 test_unit:
   stage: test
   image: python:3
   script: 
    - pip install -r requirements.txt
-   - python test_users.py
+  #  - python test_users.py
+   - python test_user.py
   only:
    - master
 
@@ -86,5 +87,22 @@ kind_k8s:
     - sleep 60 && kubectl get pods -n dev
     - kubectl -n dev port-forward --address 0.0.0.0 service/web 5000:5000 &
     - sleep 10 && curl -I http://127.0.0.1:5000
+  only:
+   - master
+
+discord:
+  stage: notification
+  script: 
+  - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+      - chmod +x send.sh
+      - ./send.sh success $WEBHOOK_DISCORD
+    when: on_success
+  failure_notification:
+    stage: notification
+    script:
+      - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+      - chmod +x send.sh
+      - ./send.sh failure $WEBHOOK_DISCORD
+    when: on_failure
   only:
    - master
