@@ -80,13 +80,11 @@ kind_k8s:
     - chmod +x /usr/local/bin/kubectl
     - kind create cluster --config=kind/kind-config.yaml
     - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
-    - kubectl get nodes
-    - kubectl create ns dev 
-    - kubectl -n dev apply -f manifest-dev
-    - sleep 30 | kubectl -n dev get pods
+    - sleep 60 && kubectl get nodes
+    - sleep 20 && kubectl create ns dev 
+    - sleep 20 && kubectl -n dev apply -f manifest-dev
     - export POD=$(kubectl -n dev get pods -l app=web -o=jsonpath='{.items[0].metadata.name}')
-    - kubectl -n dev describe pod $POD
-    - sleep 45 && kubectl -n dev port-forward service/web 5000:5000 &
+    - sleep 45 && kubectl -n dev $POD 5000:5000 &
     - curl -I http://127.0.0.1:5000
   # only:
   #  - master
