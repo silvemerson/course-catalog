@@ -80,9 +80,11 @@ kind_k8s:
     - chmod +x /usr/local/bin/kubectl
     - kind create cluster --config=kind/kind-config.yaml
     - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
+    - sleep 60 && kubectl get nodes
     - kubectl create ns dev 
     - kubectl -n dev apply -f manifest-dev
-    - sleep 45 && kubectl -n dev port-forward service web 5000:5000 &
-    - curl -I http://127.0.0.1:5000
+    - sleep 60 && kubectl get pods -n dev
+    - kubectl -n dev port-forward --address 0.0.0.0 service/web 5000:5000 &
+    - sleep 10 && curl -I http://127.0.0.1:5000
   only:
    - master
