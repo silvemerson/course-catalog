@@ -83,8 +83,8 @@ kind_k8s:
     - sleep 60 && kubectl get nodes
     - kubectl create ns dev 
     - kubectl -n dev apply -f manifest-dev
-    - sleep 30 && kubectl get pods -n dev
-    - sleep 45 && kubectl -n dev $POD 5000:5000 &
-    - curl -I http://127.0.0.1:5000
+    - sleep 60 && kubectl get pods -n dev
+    - kubectl -n dev $POD 5000:5000 &
+    - sleep 10 && curl -I http://127.0.0.1:5000
   # only:
   #  - master
