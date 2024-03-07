@@ -84,7 +84,7 @@ kind_k8s:
     - kubectl create ns dev 
     - kubectl -n dev apply -f manifest-dev
     - sleep 60 && kubectl get pods -n dev
-    - kubectl -n dev $POD port-forward svc web 5000:5000 &
+    - kubectl -n dev port-forward --address 0.0.0.0 service/web 5000:5000 &
     - sleep 10 && curl -I http://127.0.0.1:5000
   # only:
   #  - master
