@@ -97,6 +97,8 @@ success_notification:
     - chmod +x send.sh
     - ./send.sh success $WEBHOOK_URL
   when: on_success
+  only:
+   - master
 
 failure_notification:
   stage: notification
