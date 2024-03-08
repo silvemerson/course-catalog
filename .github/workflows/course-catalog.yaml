@@ -19,6 +19,7 @@ jobs:
       run: pip install -r requirements.txt
     - name:
       run: python test_users.py
+jobs:
 
   trivy_scan:
 
@@ -26,10 +27,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: build da imagem 
-      run: docker build -t course-catalog:${GITHUB_REPOSITORY_ID} .
+    # - name: build da imagem 
+    #   run: docker build -t course-catalog:${GITHUB_REPOSITORY_ID} .
     - name: Trivy Scan
-      run: docker run aquasec/trivy image course-catalog:${GITHUB_REPOSITORY_ID}
+      run: docker run aquasec/trivy image silvemerson/course-catalog
+
+jobs:
 
   build:
 
