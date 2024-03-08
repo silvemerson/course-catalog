@@ -99,6 +99,7 @@ argocd_sync:
     - rm argocd-linux-amd64
   script:
     - echo "$SERVICE_ACCOUNT_KEY" > key.json
+    - cat key.json
     - gcloud auth activate-service-account --key-file=key.json
     - gcloud container clusters get-credentials sparta-cluster --zone us-central1-c --project asgard-412419
     - argocd login --core argocd.emerson.cloudns.cl --username $ARGOCD_USER --password $ARGOCD_PASSWORD
