@@ -20,18 +20,16 @@ jobs:
     - name:
       run: python test_users.py
 
-
   trivy_scan:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    # - name: build da imagem 
-    #   run: docker build -t course-catalog:${GITHUB_REPOSITORY_ID} .
+    - name: build da imagem 
+      run: docker build -t course-catalog:$GITHUB_REPOSITORY_ID .
     - name: Trivy Scan
       run: docker run aquasec/trivy image silvemerson/course-catalog
-
 
   build:
 
