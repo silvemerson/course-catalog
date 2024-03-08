@@ -7,7 +7,7 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs:
+
 
   test_unit:
 
@@ -19,7 +19,7 @@ jobs:
       run: pip install -r requirements.txt
     - name:
       run: python test_users.py
-jobs:
+
 
   trivy_scan:
 
@@ -32,7 +32,6 @@ jobs:
     - name: Trivy Scan
       run: docker run aquasec/trivy image silvemerson/course-catalog
 
-jobs:
 
   build:
 
