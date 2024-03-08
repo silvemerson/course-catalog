@@ -96,8 +96,8 @@ deploy_prod:
   script:
     - argocd login argocd.emerson.cloudns.cl --username admin --password 7-rcmRs5WURZvOt
     - argocd app sync course-catalog
-  only:
-   - master
+  # only:
+  #  - master
 
 
 success_notification:
