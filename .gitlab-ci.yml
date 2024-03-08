@@ -94,15 +94,15 @@ argocd_sync:
   stage: deploy_prod
   image: google/cloud-sdk
   before_script:
-    - apt-get install curl
     - curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
     - install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
     - rm argocd-linux-amd64
+    - argocd version
   script:
     - echo "$SERVICE_ACCOUNT_KEY" > key.json
     - gcloud auth activate-service-account --key-file=key.json
     - gcloud container clusters get-credentials sparta-cluster --zone us-central1-c --project asgard-412419
-    - argocd login --core argocd.emerson.cloudns.cl --username $USER_ARGOCD --password $ARGOCD_PASSWORD
+    - argocd login --core argocd.emerson.cloudns.cl --username $ARGOCD_USER --password $ARGOCD_PASSWORD
     - argocd app sync course-catalog
   # only:
   #  - master
