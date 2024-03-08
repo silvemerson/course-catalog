@@ -1,0 +1,22 @@
+#course-catalog
+name: Course Catalog CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  test_unit:
+
+    runs-on: python:3
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependência 
+      run: pip install -r requirements.txt
+    - name:
+      run: python test_users.py
+
