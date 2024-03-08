@@ -25,7 +25,7 @@ spec:
         io.kompose.service: web
     spec:
       containers:
-        - image: IMAGE_TAG
+        - image: "silvemerson/course-catalog:latest"
           name: simplepythonflask
           ports:
             - containerPort: 5000
