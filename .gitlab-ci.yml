@@ -4,6 +4,7 @@ stages:
  - trivy
  - build
  - teste_deploy
+ - deploy
  - notification
 
 test_unit:
@@ -89,6 +90,18 @@ kind_k8s:
   only:
    - master
 
+deploy_prod:
+  stage: deploy
+  before_script:
+    - "Realizando o deploy do app"
+  script:
+    - 'sed -i "s| image: IMAGE_TAG | image: ${CI_JOB_ID}" web-deployment.yaml'
+    - git add .
+    s- git commit -m "Atualizado versão da imagem para ${CI_JOB_ID}" 
+    - git push
+  after_script:
+    - "Deploy com sucesso"
+
 success_notification:
   stage: notification
   script:
@@ -108,5 +121,3 @@ failure_notification:
   when: on_failure
   only:
    - master
-
-#comentario
