@@ -1,94 +1,94 @@
 stages:
-#  - test
-#  - qualitygate
-#  - trivy
-#  - build
-#  - teste_deploy
+ - test
+ - qualitygate
+ - trivy
+ - build
+ - teste_deploy
  - deploy_prod
-#  - notification
+ - notification
 
-# test_unit:
-#   stage: test
-#   image: python:3
-#   script: 
-#    - pip install -r requirements.txt
-#    - python test_users.py
-#   only:
-#    - master
+test_unit:
+  stage: test
+  image: python:3
+  script: 
+   - pip install -r requirements.txt
+   - python test_users.py
+  only:
+   - master
 
-# qualitygate:
-#   stage: qualitygate
-#   image: sonarsource/sonar-scanner-cli
-#   script:
-#     - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
-#   only:
-#    - master
+qualitygate:
+  stage: qualitygate
+  image: sonarsource/sonar-scanner-cli
+  script:
+    - sonar-scanner -Dsonar.projectKey=course-catalog -Dsonar.sources=. -Dsonar.host.url=http://sonarqube.emerson.cloudns.cl -Dsonar.token=sqp_09a665c92f25dbcc2ef8f5b18eadb0f8b9445f43
+  only:
+   - master
 
-# trivy_scan:
-#   stage: trivy
-#   image:
-#     name: gcr.io/kaniko-project/executor:v1.14.0-debug
-#     entrypoint: [""]
-#   before_script:
-#     - export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-#     - echo $TRIVY_VERSION
-#     - wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -    
-#   script:
-#     - mkdir -p /kaniko/.docker
-#     - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-#     - >-
-#       /kaniko/executor
-#       --context "${CI_PROJECT_DIR}"
-#       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-#       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
-#       --no-push
-#     - ./trivy image silvemerson/course-catalog
-#   only:
-#    - master
-
-
-# kaniko:
-#   stage: build
-#   image:
-#     name: gcr.io/kaniko-project/executor:v1.14.0-debug
-#     entrypoint: [""]
-#   script:
-#     - mkdir -p /kaniko/.docker
-#     - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-#     - >-
-#       /kaniko/executor
-#       --context "${CI_PROJECT_DIR}"
-#       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-#       --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
-#       --destination "${DOCKER_HUB_IMAGE}:latest"
-#   only:
-#    - master
+trivy_scan:
+  stage: trivy
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  before_script:
+    - export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+    - echo $TRIVY_VERSION
+    - wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -    
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
+      --no-push
+    - ./trivy image silvemerson/course-catalog
+  only:
+   - master
 
 
-# kind_k8s:
-#   image: docker:stable
-#   variables:
-#     KUBECTL: v1.17.0
-#     KIND: v0.8.1
-#   services:
-#     - docker:dind
-#   stage: teste_deploy
-#   script:
-#     - apk add -U wget curl
-#     - wget -O /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND}/kind-linux-amd64
-#     - chmod +x /usr/local/bin/kind
-#     - wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl
-#     - chmod +x /usr/local/bin/kubectl
-#     - kind create cluster --config=kind/kind-config.yaml
-#     - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
-#     - sleep 60 && kubectl get nodes
-#     - kubectl create ns dev 
-#     - kubectl -n dev apply -f manifest-dev
-#     - sleep 60 && kubectl get pods -n dev
-#     - kubectl -n dev port-forward --address 0.0.0.0 service/web 5000:5000 &
-#     - sleep 10 && curl -I http://127.0.0.1:5000
-#   only:
-#    - master
+kaniko:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${DOCKER_HUB_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_HUB_USER}" "${DOCKER_HUB_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${DOCKER_HUB_IMAGE}:${CI_JOB_ID}"
+      --destination "${DOCKER_HUB_IMAGE}:latest"
+  only:
+   - master
+
+
+kind_k8s:
+  image: docker:stable
+  variables:
+    KUBECTL: v1.17.0
+    KIND: v0.8.1
+  services:
+    - docker:dind
+  stage: teste_deploy
+  script:
+    - apk add -U wget curl
+    - wget -O /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND}/kind-linux-amd64
+    - chmod +x /usr/local/bin/kind
+    - wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl
+    - chmod +x /usr/local/bin/kubectl
+    - kind create cluster --config=kind/kind-config.yaml
+    - sed -i -E -e 's/localhost|0\.0\.0\.0/docker/g' "$HOME/.kube/config"
+    - sleep 60 && kubectl get nodes
+    - kubectl create ns dev 
+    - kubectl -n dev apply -f manifest-dev
+    - sleep 60 && kubectl get pods -n dev
+    - kubectl -n dev port-forward --address 0.0.0.0 service/web 5000:5000 &
+    - sleep 10 && curl -I http://127.0.0.1:5000
+  only:
+   - master
 
 argocd_sync:
   stage: deploy_prod
@@ -105,27 +105,27 @@ argocd_sync:
     - kubectl config set-context --current --namespace=argocd
     - argocd login --core argocd.emerson.cloudns.cl --username $ARGOCD_USER --password $ARGOCD_PASSWORD
     - argocd app sync course-catalog
-  # only:
-  #  - master
+  only:
+   - master
 
 
-# success_notification:
-#   stage: notification
-#   script:
-#     - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
-#     - chmod +x send.sh
-#     - ./send.sh success $WEBHOOK_URL
-#   when: on_success
-#   only:
-#    - master
+success_notification:
+  stage: notification
+  script:
+    - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh success $WEBHOOK_URL
+  when: on_success
+  only:
+   - master
 
-# failure_notification:
-#   stage: notification
-#   script:
-#     - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
-#     - chmod +x send.sh
-#     - ./send.sh failure $WEBHOOK_URL
-#   when: on_failure
-#   only:
-#    - master
+failure_notification:
+  stage: notification
+  script:
+    - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+    - chmod +x send.sh
+    - ./send.sh failure $WEBHOOK_URL
+  when: on_failure
+  only:
+   - master
 
