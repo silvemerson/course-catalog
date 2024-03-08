@@ -94,7 +94,7 @@ deploy_prod:
   stage: deploy
   image: argoproj/argocd:v2.6.15
   script:
-    - argocd login argocd.emerson.cloudns.cl --username $USER_ARGOCD --password $ARGOCD_PASSWORD
+    - argocd login --core argocd.emerson.cloudns.cl --username $USER_ARGOCD --password $ARGOCD_PASSWORD
     - argocd app sync course-catalog
   # only:
   #  - master
