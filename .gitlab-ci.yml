@@ -2,7 +2,7 @@ stages:
  - test
  - qualitygate
  - trivy
- - build
+ - build_and_push
  - teste_deploy
  - deploy_prod
  - notification
@@ -48,7 +48,7 @@ trivy_scan:
 
 
 kaniko:
-  stage: build
+  stage: build_and_push
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
