@@ -92,15 +92,15 @@ kind_k8s:
 
 deploy_prod:
   stage: deploy
+  image: argoproj/argocd:v2.6.15
+
   before_script:
     - "Realizando o deploy do app"
   script:
-    - 'sed -i "s| image: IMAGE_TAG | image: ${CI_JOB_ID}" web-deployment.yaml'
-    - git add .
-    - git commit -m "Atualizado versão da imagem para ${CI_JOB_ID}" 
-    - git push
+    - argocd login argocd.emerson.cloudns.cl --username admin --password 7-rcmRs5WURZvOt
+    - argocd app sync course-catalog
   after_script:
-    - "Deploy com sucesso"
+    - "Deploy com sucesso" 
   only:
    - master
 
