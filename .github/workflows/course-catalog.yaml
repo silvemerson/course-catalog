@@ -20,18 +20,22 @@ jobs:
     - name:
       run: python test_users.py
 
-
   trivy_scan:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Config Variavel 
-      run: export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/') | echo $TRIVY_VERSION
-    - name: Install Trvy
-      run: wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
-    - name: Build para teste de segurança
-      run: docker build -i course-catalog:trivy
+    - name: build da imagem 
+      run: docker build -t course-catalog:${GITHUB_REPOSITORY_ID} .
     - name: Trivy Scan
-      run: ./trivy image course-catalog:trivy
+      run: docker run aquasec/trivy image course-catalog:${GITHUB_REPOSITORY_ID}
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: build da imagem 
+      run: docker build -t course-catalog:$GITHUB_REPOSITORY_ID .
