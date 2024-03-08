@@ -4,7 +4,7 @@ stages:
  - trivy
  - build
  - teste_deploy
- - deploy
+ - deploy_prod
  - notification
 
 test_unit:
@@ -90,17 +90,21 @@ kind_k8s:
   only:
    - master
 
-deploy_prod:
-  stage: deploy
-  image: argoproj/argocd:v2.6.15
-
+argocd_sync:
+  stage: deploy_prod
+  image: google/cloud-sdk
   before_script:
-    - "Realizando o deploy do app"
+    - curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+    - install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+    - rm argocd-linux-amd64
   script:
-    - argocd login argocd.emerson.cloudns.cl --username admin --password 7-rcmRs5WURZvOt
+    - echo "$GCP_SERVICE_ACCOUNT_KEY" > key.json
+    - cat key.json
+    - gcloud auth activate-service-account --key-file=key.json
+    - gcloud container clusters get-credentials sparta-cluster --zone us-central1-c --project asgard-412419
+    - kubectl config set-context --current --namespace=argocd
+    - argocd login --core argocd.emerson.cloudns.cl --username $ARGOCD_USER --password $ARGOCD_PASSWORD
     - argocd app sync course-catalog
-  after_script:
-    - "Deploy com sucesso" 
   only:
    - master
 
@@ -124,3 +128,4 @@ failure_notification:
   when: on_failure
   only:
    - master
+
