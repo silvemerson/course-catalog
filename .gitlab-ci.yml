@@ -5,7 +5,7 @@ stages:
 #  - build
 #  - teste_deploy
  - deploy
- - notification
+#  - notification
 
 # test_unit:
 #   stage: test
@@ -94,28 +94,29 @@ deploy_prod:
   stage: deploy
   image: argoproj/argocd:v2.6.15
   script:
-    - argocd login argocd.emerson.cloudns.cl --username 'admin' --password '7-rcmRs5WURZvOt'
+    - argocd login argocd.emerson.cloudns.cl --username $USER_ARGOCD --password $ARGOCD_PASSWORD
     - argocd app sync course-catalog
   # only:
   #  - master
 
 
-success_notification:
-  stage: notification
-  script:
-    - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
-    - chmod +x send.sh
-    - ./send.sh success $WEBHOOK_URL
-  when: on_success
-  only:
-   - master
+# success_notification:
+#   stage: notification
+#   script:
+#     - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+#     - chmod +x send.sh
+#     - ./send.sh success $WEBHOOK_URL
+#   when: on_success
+#   only:
+#    - master
 
-failure_notification:
-  stage: notification
-  script:
-    - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
-    - chmod +x send.sh
-    - ./send.sh failure $WEBHOOK_URL
-  when: on_failure
-  only:
-   - master
+# failure_notification:
+#   stage: notification
+#   script:
+#     - wget https://raw.githubusercontent.com/DiscordHooks/gitlab-ci-discord-webhook/master/send.sh
+#     - chmod +x send.sh
+#     - ./send.sh failure $WEBHOOK_URL
+#   when: on_failure
+#   only:
+#    - master
+
